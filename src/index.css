@@ -1,0 +1,26 @@
+body {
+    background-color: silver;
+    font-size: 24px;
+  }
+  
+  #root {
+    text-align: center;
+  }
+  
+  h2 {
+    margin: 0;
+  }
+  
+  #image-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  #image-container, #text-container {
+    margin-top: 10px;
+  }
+  
+  img:hover {
+    height: 100%;
+  }

@@ -12,13 +12,16 @@ class App extends Component {
       const item = post.data
       return {
         type: item.preview? 'image': 'text', 
-        content: item.preview? item.preview.images[0].source: item.selftext_html, 
+        content: item.preview? this.selectImage(item.preview.images[0]): item.selftext_html, 
         id: item.id, 
         title: item.title
       }
     })
   }
 
+  selectImage = (image) => (
+    image.variants.gif? image.variants.gif.source: image.source
+  )
   
   fillState = () => {
     loadImage().then(data => {
@@ -43,7 +46,7 @@ class App extends Component {
   setupInterval = () => {
     this.interval = setInterval(() => {
       this.nextSlide()
-    }, 10000)
+    }, 20000)
   }
   
   generateView = () => {
@@ -58,7 +61,9 @@ class App extends Component {
           <div>
             <h2>{post.title}</h2>
             {nextButton}            
-            <div><img src={post.content.url} height={post.content.height} width = {post.content.width}/></div>
+            <div id='image-container'>
+              <img src={post.content.url} height={Math.min(post.content.height, 460)} alt={post.title}/>
+            </div>
           </div>
         )
       }
@@ -67,7 +72,7 @@ class App extends Component {
          <div>
           <h2>{post.title}</h2>
           {nextButton}
-          <div dangerouslySetInnerHTML={{__html: 
+          <div id='text-container' dangerouslySetInnerHTML={{__html: 
         post.content}}></div>         
          </div>
         )
@@ -87,8 +92,9 @@ class App extends Component {
   }
 
   render(){
-    return(<div>{this.generateView()}</div>)
+    return this.generateView()
   }
 }
+
 
 export default App;
