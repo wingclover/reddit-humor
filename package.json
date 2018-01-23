@@ -1,16 +1,26 @@
 {
-  "name": "reddit-humor",
+  "name": "progroomour",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "gh-pages": "^1.1.0",
+    "material-ui": "^1.0.0-beta.29",
+    "prop-types": "^15.6.0",
     "react": "^16.2.0",
     "react-dom": "^16.2.0",
-    "react-scripts": "1.1.0"
+    "react-scripts": "1.1.0",
+    "react-scroll": "^1.7.6",
+    "react-to-target-auto-scroll": "^1.0.4",
+    "typeface-roboto": "^0.0.50",
+    "whatwg-fetch": "^2.0.3"
   },
   "scripts": {
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d build",
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test --env=jsdom",
     "eject": "react-scripts eject"
-  }
+  },
+  "homepage": "https://aquent-it-solutions.github.io/reddit-humor/"
 }

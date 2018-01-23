@@ -1,0 +1,1 @@
+export const isGIF = img => img.variants.gif? img.variants.gif.source: img.source;

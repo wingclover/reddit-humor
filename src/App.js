@@ -1,93 +1,62 @@
 import React, { Component } from 'react';
+import './App.css';
+import 'whatwg-fetch';
+import Post from './components/Post';
 
-const loadImage = () => {
-  return fetch('https://www.reddit.com/r/programmerhumor/hot/.json?raw_json=1').then(data => data.json())
-}
+const fetchPosts = url => fetch(url).then(res => res.json());
+
+let postsIntervalId;
+const NSFWPOSTS = {};
 
 class App extends Component {
-  state = {posts: []}
-  
-  createPosts = (posts) => {
-    return posts.map(post => {
-      const item = post.data
-      return {
-        type: item.preview? 'image': 'text', 
-        content: item.preview? item.preview.images[0].source: item.selftext_html, 
-        id: item.id, 
-        title: item.title
-      }
+
+  state = {
+    posts: [],
+    currentPost: undefined
+  }
+
+  initPosts = async () => {
+    const posts = await fetchPosts('https://www.reddit.com/r/programmerhumor/hot/.json?raw_json=1')
+                        .then(data => data.data.children.filter(post => !post.data.stickied && !NSFWPOSTS[post.data.id]));
+    this.setState({posts, currentPost: 0}, () => {
+      postsIntervalId = setInterval(() => {
+        this.updatePost()
+      }, 15000)
     })
   }
 
-  
-  fillState = () => {
-    loadImage().then(data => {
-      const posts = this.createPosts(data.data.children.filter(post => !post.data.stickied))
-      this.setState({posts: this.state.posts.concat(posts)})
-    })
-  }
-  
-  
-  nextSlide = () => {
-    clearInterval(this.interval)
-    
-    if (this.state.posts.length > 5){
-       this.setState({posts: this.state.posts.slice(1)}) 
-    } else {
-      this.fillState()   
-    }
-    
-    this.setupInterval()
-  }
-  
-  setupInterval = () => {
-    this.interval = setInterval(() => {
-      this.nextSlide()
-    }, 10000)
-  }
-  
-  generateView = () => {
-    const nextButton = (<button id='next-button' onClick={this.nextSlide}>next</button>)
-    
-    if(this.state.posts.length > 0){
-      
-      const post = this.state.posts[0]
-
-      if (post.type === 'image'){
-        return (
-          <div>
-            <h2>{post.title}</h2>
-            {nextButton}            
-            <div><img src={post.content.url} height={post.content.height} width = {post.content.width}/></div>
-          </div>
-        )
-      }
-      else {
-        return (        
-         <div>
-          <h2>{post.title}</h2>
-          {nextButton}
-          <div dangerouslySetInnerHTML={{__html: 
-        post.content}}></div>         
-         </div>
-        )
-      }
-    } else {
-      return <div></div>
+  updatePost = () => {
+    clearInterval(postsIntervalId);
+    if(this.state.currentPost === this.state.posts.length - 1) {     
+      this.initPosts();
+    } 
+    else {
+      this.setState(prevState => ({currentPost: ++prevState.currentPost}), () => {
+        postsIntervalId = setInterval(() => {
+          this.updatePost()
+        }, 1500000)
+      })
     }  
   }
-  
-  componentDidMount(){
-    this.fillState()
-    this.setupInterval()
+
+  componentDidMount() {
+      this.initPosts();
   }
 
-  componentWillUnmount() {
-    clearInterval(this.interval)
-  }
+  blackList = id => NSFWPOSTS[id] = true;
 
-  render(){
-    return(<div>{this.generateView()}</div>)
+  render() {
+    return (
+      <div className="App" style={{height: window.innerHeight}}>
+        {this.state.posts.length !== 0  && 
+          <Post 
+            post={this.state.posts[this.state.currentPost]} 
+            onClickNext={this.updatePost} 
+            onClickNSFW={this.blackList}
+          />
+        }
+      </div>
+    );
   }
 }
 
