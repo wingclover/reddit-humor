@@ -4,6 +4,7 @@
   "private": true,
   "dependencies": {
     "gh-pages": "^1.1.0",
+    "gif-info": "^1.0.1",
     "material-ui": "^1.0.0-beta.29",
     "prop-types": "^15.6.0",
     "react": "^16.2.0",
@@ -23,5 +24,10 @@
     "test": "react-scripts test --env=jsdom",
     "eject": "react-scripts eject"
   },
-  "homepage": "https://aquent-it-solutions.github.io/reddit-humor/"
+  "homepage": "https://aquent-it-solutions.github.io/reddit-humor/",
+  "devDependencies": {
+    "chai": "^4.1.2",
+    "enzyme": "^3.3.0",
+    "enzyme-adapter-react-16": "^1.1.1"
+  }
 }
