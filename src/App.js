@@ -12,31 +12,34 @@ class App extends Component {
 
   state = {
     posts: [],
-    currentPost: undefined
+    currentPost: undefined,
+    show: false
   }
 
   initPosts = async () => {
     const posts = await fetchPosts('https://www.reddit.com/r/programmerhumor/hot/.json?raw_json=1')
                         .then(data => data.data.children.filter(post => !post.data.stickied && !NSFWPOSTS[post.data.id]));
-    this.setState({posts, currentPost: 0}, () => {
+    this.setState(prevState => ({posts, currentPost: 0, show: !prevState.show}), () => {
       postsIntervalId = setInterval(() => {
         this.updatePost()
-      }, 15000)
+      }, 20000)
     })
   }
 
   updatePost = () => {
     clearInterval(postsIntervalId);
-    if(this.state.currentPost === this.state.posts.length - 1) {     
-      this.initPosts();
-    } 
-    else {
-      this.setState(prevState => ({currentPost: ++prevState.currentPost}), () => {
-        postsIntervalId = setInterval(() => {
-          this.updatePost()
-        }, 1500000)
-      })
-    }  
+    this.setState(prevState => ({show: !prevState.show}), () => {
+      if(this.state.currentPost === this.state.posts.length - 1) {     
+        this.initPosts();
+      } 
+      else {
+        this.setState(prevState => ({currentPost: ++prevState.currentPost, show: !prevState.show}), () => {
+          postsIntervalId = setInterval(() => {
+            this.updatePost()
+          }, 20000)
+        })
+      }  
+    })
   }
 
   componentDidMount() {
@@ -46,6 +49,9 @@ class App extends Component {
   blackList = id => NSFWPOSTS[id] = true;
 
   render() {
+    
+    const { show } = this.state;
+
     return (
       <div className="App" style={{height: window.innerHeight}}>
         {this.state.posts.length !== 0  && 
@@ -53,6 +59,7 @@ class App extends Component {
             post={this.state.posts[this.state.currentPost]} 
             onClickNext={this.updatePost} 
             onClickNSFW={this.blackList}
+            in={show}
           />
         }
       </div>
