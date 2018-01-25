@@ -43,8 +43,6 @@ let scrollIntervalId, setTimeoutIdToTop, setTimeoutIdToBottom;
 
 class Post extends Component {
 
-  state = {containerHeight: 0, containerWidth: 0}
-
   mediaEl = null;
 
   handleClickNext = () => {
@@ -79,10 +77,12 @@ class Post extends Component {
   setImageStyles = (image) => {
     let h, w
 
-    if (image.height > image.width && image.height > this.state.containerHeight * 1.5){
-      w = Math.min(image.width, this.state.containerWidth)
-    } else {
-      h = Math.min(image.height, this.state.containerHeight)
+    if(this.mediaEl){
+      if (image.height * 0.7 > image.width && image.height > this.mediaEl.clientHeight * 0.9 * 1.5){
+        w = Math.min(image.width, this.mediaEl.clientWidth * 0.9)
+      } else {
+        h = Math.min(image.height, this.mediaEl.clientHeight * 0.9)
+      }
     }
 
     return {
@@ -94,15 +94,10 @@ class Post extends Component {
   }
 
   handleClickFullScreen = () => {
-    document.getElementById('root').webkitRequestFullscreen()
+    document.documentElement.webkitRequestFullscreen()
   }
 
   componentDidMount() {
-    const container = document.getElementById('bodyContainer')
-    this.setState({
-      containerHeight: container.clientHeight * 0.8,
-      containerWidth: container.clientWidth * 0.8
-    })
     this.scrollToBottom();
   }
 
@@ -128,7 +123,7 @@ class Post extends Component {
           <div className={classes.post} key={postData.id}>
             <div className={classes.paper}>
               <Typography type='title' className={classes.title}>{postData.title}</Typography>
-              <div className={classes.content} id='bodyContainer' ref={e => this.mediaEl = e}>
+              <div className={classes.content} ref={e => this.mediaEl = e}>
                 {media && 
                   <img 
                     style={this.setImageStyles(media)} 

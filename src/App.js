@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import './App.css';
 import 'whatwg-fetch';
 import Post from './components/Post';
 
@@ -53,7 +52,7 @@ class App extends Component {
     const { show } = this.state;
 
     return (
-      <div className="App" style={{width: window.innerWidth, height: window.innerHeight}}>
+      <div className="App">
         {this.state.posts.length !== 0  && 
           <Post 
             post={this.state.posts[this.state.currentPost]} 
