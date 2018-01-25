@@ -3,6 +3,7 @@ import { withStyles } from 'material-ui/styles';
 import Button from 'material-ui/Button';
 import Typography from 'material-ui/Typography';
 import { CSSTransition } from 'react-transition-group';
+import screenfull from 'screenfull'
 
 import * as util from '../../utils';
 
@@ -94,7 +95,11 @@ class Post extends Component {
   }
 
   handleClickFullScreen = () => {
-    document.documentElement.webkitRequestFullscreen()
+    if (screenfull.enabled) {
+      screenfull.request();
+    } else {
+      alert('full screen is not enabled')
+    }
   }
 
   componentDidMount() {
@@ -138,7 +143,7 @@ class Post extends Component {
             <div className={classes.btns}>
               <Button raised onClick={this.handleClickNext}>NEXT</Button>
               <Button raised style={{marginTop: 15}} onClick={this.handleClickNSFW}>NSFW?</Button>
-              <Button raised style={{marginTop: 15, display: document.webkitIsFullScreen? 'none': 'block'}} onClick={this.handleClickFullScreen}>FullScreen</Button>
+              <Button raised style={{marginTop: 15, display: screenfull.isFullscreen? 'none': 'block'}} onClick={this.handleClickFullScreen}>FullScreen</Button>
             </div>   
           </div>
         </CSSTransition>         
